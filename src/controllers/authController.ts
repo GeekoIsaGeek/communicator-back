@@ -1,11 +1,28 @@
 import User from '../models/user';
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
+import validator from 'validator';
+
+const validateFields = (email: string, password: string, firstname: string, lastname: string) => {
+	if (!email || !password || !firstname || !lastname) {
+		throw Error('All fields are required');
+	}
+
+	if (!validator.isEmail(email)) {
+		throw Error('Email is not valid');
+	}
+
+	if (!validator.isStrongPassword(password)) {
+		throw Error('Password is not strong enough');
+	}
+};
 
 export const registerUser = async (req: Request, res: Response) => {
 	const { email, firstname, lastname, password } = req.body;
 
 	try {
+		validateFields(email, password, firstname, lastname);
+
 		const exists = await User.findOne({ email });
 
 		if (exists) {
