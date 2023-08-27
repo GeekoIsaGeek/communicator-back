@@ -53,7 +53,6 @@ export const registerUser = async (req: Request, res: Response) => {
 
 export const loginUser = async (req: Request, res: Response) => {
 	const { email, password } = req.body;
-
 	try {
 		if (!email || !password) {
 			throw new Error('Both fields must be filled');
