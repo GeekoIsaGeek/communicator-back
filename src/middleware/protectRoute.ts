@@ -14,7 +14,7 @@ interface JwtPayload {
 const protectRoute = async (req: IExtendedRequest, res: Response, next: NextFunction) => {
 	const { authorization } = req.headers;
 	if (!authorization) {
-		res.status(401).json({ error: 'ავტორიზაციის ტოკენი ვერ მოიძებნა!' });
+		res.status(401).json({ error: 'Authorization token not found!' });
 	}
 	if (authorization) {
 		const token = authorization.split(' ')[1];
@@ -24,7 +24,7 @@ const protectRoute = async (req: IExtendedRequest, res: Response, next: NextFunc
 			next();
 		} catch (e) {
 			console.log((e as Error).message);
-			res.status(401).json({ error: 'დაფიქსირდა არაავტორიზებული მოთხოვნა!' });
+			res.status(401).json({ error: 'Unauthorized Request!' });
 		}
 	}
 };
