@@ -65,9 +65,9 @@ export const loginUser = async (req: Request, res: Response) => {
 			throw new Error('Email is not correct');
 		}
 
-		const match = await bcrypt.compare(password, user.password);
+		const matched = await bcrypt.compare(password, user.password);
 
-		if (!match) {
+		if (!matched) {
 			throw new Error('Password is not correct');
 		}
 		const token = createToken(user._id);
