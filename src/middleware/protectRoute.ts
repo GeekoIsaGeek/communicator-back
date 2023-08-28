@@ -18,8 +18,10 @@ const protectRoute = async (req: IExtendedRequest, res: Response, next: NextFunc
 	}
 	if (authorization) {
 		const token = authorization.split(' ')[1];
+		console.log(token);
 		try {
 			const { id } = jwt.verify(token, process.env.TOKEN_SECRET!) as JwtPayload;
+			console.log(id);
 			req.user! = await User.findOne({ _id: id }).select('-password');
 			next();
 		} catch (e) {
