@@ -45,7 +45,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
 		const token = createToken(user._id);
 
-		res.status(200).json({ email, firstname, lastname, token });
+		res.status(200).json({ email, firstname, lastname, token, id: user._id });
 	} catch (error) {
 		res.status(400).json({ error: (error as Error).message });
 	}
@@ -71,7 +71,7 @@ export const loginUser = async (req: Request, res: Response) => {
 		}
 		const token = createToken(user._id);
 
-		res.status(200).json({ email, firstname: user.firstname, lastname: user.lastname, token });
+		res.status(200).json({ email, firstname: user.firstname, lastname: user.lastname, token, id: user._id });
 	} catch (error) {
 		res.status(400).json({ error: (error as Error).message });
 	}
