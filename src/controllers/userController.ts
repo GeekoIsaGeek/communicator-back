@@ -12,7 +12,13 @@ export const getUserData = async (req: IExtendedRequest, res: Response) => {
 			throw new Error('User with this email does not exist');
 		}
 
-		res.status(200).json({ email: user.email, firstname: user.firstname, lastname: user.lastname, id: user._id });
+		res.status(200).json({
+			email: user.email,
+			firstname: user.firstname,
+			lastname: user.lastname,
+			id: user._id,
+			avatar: user.avatar,
+		});
 	} catch (error) {
 		res.status(400).json({ error: (error as Error).message });
 	}

@@ -5,6 +5,7 @@ import { Types } from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
+import { IExtendedRequest } from '../types/general';
 
 dotenv.config();
 
@@ -22,11 +23,11 @@ const validateFields = (email: string, password: string, firstname: string, last
 	}
 
 	if (!validator.isStrongPassword(password)) {
-		throw Error('Password is not strong enough');
+		throw Error('Password is not strong enough (You must use at least one symbol,number and an uppercase character)');
 	}
 };
 
-export const registerUser = async (req: Request, res: Response) => {
+export const registerUser = async (req: IExtendedRequest, res: Response) => {
 	const { email, firstname, lastname, password } = req.body;
 
 	try {
@@ -41,11 +42,16 @@ export const registerUser = async (req: Request, res: Response) => {
 		const salt = await bcrypt.genSalt(10);
 		const hashedPassword = await bcrypt.hash(password, salt);
 
-		const user = await User.create({ email, firstname, lastname, password: hashedPassword });
+		const user = new User({ email, firstname, lastname, password: hashedPassword });
+
+		if (req.imageName) {
+			user.avatar = `/storage/images/avatars/${req.imageName}`;
+		}
+		user.save();
 
 		const token = createToken(user._id);
 
-		res.status(200).json({ email, firstname, lastname, token, id: user._id });
+		res.status(200).json({ email, firstname, lastname, token, id: user._id, avatar: user.avatar });
 	} catch (error) {
 		res.status(400).json({ error: (error as Error).message });
 	}
