@@ -15,6 +15,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use('/api/avatars', express.static('storage/images/avatars'));
 app.use('/api', authRoutes);
 app.use('/api/user', userRoutes);
 

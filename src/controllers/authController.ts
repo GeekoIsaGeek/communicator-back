@@ -45,7 +45,7 @@ export const registerUser = async (req: IExtendedRequest, res: Response) => {
 		const user = new User({ email, firstname, lastname, password: hashedPassword });
 
 		if (req.imageName) {
-			user.avatar = `/storage/images/avatars/${req.imageName}`;
+			user.avatar = `/avatars/${req.imageName}`;
 		}
 		user.save();
 
@@ -59,6 +59,7 @@ export const registerUser = async (req: IExtendedRequest, res: Response) => {
 
 export const loginUser = async (req: Request, res: Response) => {
 	const { email, password } = req.body;
+
 	try {
 		if (!email || !password) {
 			throw new Error('Both fields must be filled');
@@ -77,7 +78,14 @@ export const loginUser = async (req: Request, res: Response) => {
 		}
 		const token = createToken(user._id);
 
-		res.status(200).json({ email, firstname: user.firstname, lastname: user.lastname, token, id: user._id });
+		res.status(200).json({
+			email,
+			firstname: user.firstname,
+			lastname: user.lastname,
+			token,
+			id: user._id,
+			avatar: user.avatar,
+		});
 	} catch (error) {
 		res.status(400).json({ error: (error as Error).message });
 	}
