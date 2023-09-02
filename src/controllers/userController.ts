@@ -1,6 +1,9 @@
 import User from '../models/user';
 import { IExtendedRequest } from '../types/general';
 import { Response } from 'express';
+import { IUser } from '../types/user';
+
+type ExtendedUser = IUser & { id: string };
 
 export const getAuthenticatedUserData = async (req: IExtendedRequest, res: Response) => {
 	const { email } = req.user!;
@@ -16,7 +19,7 @@ export const getAuthenticatedUserData = async (req: IExtendedRequest, res: Respo
 			email: user.email,
 			firstname: user.firstname,
 			lastname: user.lastname,
-			id: user._id,
+			id: user.id,
 			avatar: user.avatar,
 		});
 	} catch (error) {
@@ -26,7 +29,14 @@ export const getAuthenticatedUserData = async (req: IExtendedRequest, res: Respo
 
 export const getUsers = async (req: IExtendedRequest, res: Response) => {
 	try {
-		const users = await User.find();
+		const projection = {
+			id: 1,
+			firstname: 1,
+			lastname: 1,
+			avatar: 1,
+		};
+		const users = await User.find({ id: { $ne: (req.user as ExtendedUser)!.id } }, projection);
+
 		res.json(users);
 	} catch (error) {
 		res.json({ error: (error as Error).message });

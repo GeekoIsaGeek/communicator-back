@@ -49,9 +49,9 @@ export const registerUser = async (req: IExtendedRequest, res: Response) => {
 		}
 		user.save();
 
-		const token = createToken(user._id);
+		const token = createToken(user.id);
 
-		res.status(200).json({ email, firstname, lastname, token, id: user._id, avatar: user.avatar });
+		res.status(200).json({ email, firstname, lastname, token, id: user.id, avatar: user.avatar });
 	} catch (error) {
 		res.status(400).json({ error: (error as Error).message });
 	}
@@ -76,14 +76,14 @@ export const loginUser = async (req: Request, res: Response) => {
 		if (!matched) {
 			throw new Error('Password is not correct');
 		}
-		const token = createToken(user._id);
+		const token = createToken(user.id);
 
 		res.status(200).json({
 			email,
 			firstname: user.firstname,
 			lastname: user.lastname,
 			token,
-			id: user._id,
+			id: user.id,
 			avatar: user.avatar,
 		});
 	} catch (error) {
