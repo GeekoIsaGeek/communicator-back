@@ -2,7 +2,7 @@ import User from '../models/user';
 import { IExtendedRequest } from '../types/general';
 import { Response } from 'express';
 
-export const getUserData = async (req: IExtendedRequest, res: Response) => {
+export const getAuthenticatedUserData = async (req: IExtendedRequest, res: Response) => {
 	const { email } = req.user!;
 
 	try {
@@ -21,5 +21,14 @@ export const getUserData = async (req: IExtendedRequest, res: Response) => {
 		});
 	} catch (error) {
 		res.status(400).json({ error: (error as Error).message });
+	}
+};
+
+export const getUsers = async (req: IExtendedRequest, res: Response) => {
+	try {
+		const users = await User.find();
+		res.json(users);
+	} catch (error) {
+		res.json({ error: (error as Error).message });
 	}
 };

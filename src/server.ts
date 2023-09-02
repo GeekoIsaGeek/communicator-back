@@ -17,7 +17,7 @@ app.use(express.json());
 
 app.use('/api/avatars', express.static('storage/images/avatars'));
 app.use('/api', authRoutes);
-app.use('/api/user', userRoutes);
+app.use('/api/users', userRoutes);
 
 app.get('/', (req, res) => {
 	res.send(`
