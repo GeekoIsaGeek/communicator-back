@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { IMessage } from '../types/message';
 
 const messageSchema = new mongoose.Schema({
 	content: {
@@ -15,14 +16,10 @@ const messageSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User',
 	},
-});
-
-messageSchema.set('toJSON', {
-	transform: (document, returnedObject) => {
-		returnedObject.id = returnedObject._id.toString();
-		delete returnedObject._id;
-		delete returnedObject.__v;
+	seen: {
+		required: true,
+		type: Boolean,
 	},
 });
 
-export default mongoose.model('Message', messageSchema);
+export default mongoose.model<IMessage>('Message', messageSchema);

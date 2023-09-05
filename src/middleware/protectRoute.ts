@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/user';
 import dotenv from 'dotenv';
 import { Types } from 'mongoose';
-import { NextFunction, Response, Request } from 'express';
+import { NextFunction, Response } from 'express';
 import { IExtendedRequest } from '../types/general';
 
 dotenv.config();
@@ -19,8 +19,8 @@ const protectRoute = async (req: IExtendedRequest, res: Response, next: NextFunc
 	if (authorization) {
 		const token = authorization.split(' ')[1];
 		try {
-			const { id } = jwt.verify(token, process.env.TOKEN_SECRET!) as JwtPayload;
-			req.user! = await User.findOne({ _id: id }).select('-password');
+			const { id: _id } = jwt.verify(token, process.env.TOKEN_SECRET!) as JwtPayload;
+			req.user! = await User.findOne({ _id }).select('-password');
 			next();
 		} catch (e) {
 			const errorMessage = (e as Error).message;

@@ -3,8 +3,7 @@ import mongoose from 'mongoose';
 export interface IUser {
 	email: string;
 	password: string;
-	firstname: string;
-	lastname: string;
+	name: string;
 	connections?: [
 		{
 			type: typeof mongoose.Schema.Types.ObjectId;
