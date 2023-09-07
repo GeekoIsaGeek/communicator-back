@@ -6,11 +6,12 @@ import validator from 'validator';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import { IExtendedRequest } from '../types/general';
+import getUserWithConnections from '../actions/getUserWithConnections';
 
 dotenv.config();
 
-const createToken = (_id: Types.ObjectId) => {
-	return jwt.sign({ _id }, process.env.TOKEN_SECRET!, { expiresIn: '7d' });
+const createToken = (id: Types.ObjectId) => {
+	return jwt.sign({ id }, process.env.TOKEN_SECRET!, { expiresIn: '7d' });
 };
 
 const validateFields = (email: string, password: string, name: string) => {
@@ -48,7 +49,6 @@ export const registerUser = async (req: IExtendedRequest, res: Response) => {
 			user.avatar = `/avatars/${req.imageName}`;
 		}
 		user.save();
-
 		const token = createToken(user._id);
 
 		res.status(200).json({ email, name, token, _id: user._id, avatar: user.avatar });
@@ -76,15 +76,12 @@ export const loginUser = async (req: Request, res: Response) => {
 		if (!matched) {
 			throw new Error('Password is not correct');
 		}
+
+		const userWithConnections = getUserWithConnections(user.email);
+
 		const token = createToken(user._id);
 
-		res.status(200).json({
-			email,
-			token,
-			id: user._id,
-			name: user.name,
-			avatar: user.avatar,
-		});
+		res.status(200).json({ ...userWithConnections, token });
 	} catch (error) {
 		res.status(400).json({ error: (error as Error).message });
 	}

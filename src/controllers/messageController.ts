@@ -3,7 +3,6 @@ import { Request, Response } from 'express';
 
 export const getMessages = async (req: Request, res: Response) => {
 	const { receiver, sender } = req.query;
-
 	const messages = await Message.find({
 		$or: [
 			{ sender, receiver },

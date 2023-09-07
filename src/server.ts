@@ -11,7 +11,6 @@ import { IMessage } from './types/message';
 import Message from './models/message';
 import authSocket from './middleware/authSocket';
 import messageRoutes from './routes/messageRoutes';
-import { IUser } from './types/user';
 import User from './models/user';
 
 connectDB();
@@ -37,14 +36,6 @@ app.use('/api', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/messages', messageRoutes);
 
-app.get('/', (req, res) => {
-	res.send(`
-		<h1 style="text-align:center; font-family:system-ui">
-			REST API for a messaging app
-		</h1>
-	`);
-});
-
 io.use((socket, next) => {
 	authSocket(socket, next);
 });
@@ -68,6 +59,14 @@ io.on('connection', (socket: Socket) => {
 
 		io.to(room).emit('message', message);
 	});
+});
+
+app.get('/', (req, res) => {
+	res.send(`
+		<h1 style="text-align:center; font-family:system-ui">
+			REST API for a messaging app
+		</h1>
+	`);
 });
 
 mongoose.connection.once('open', () => {
