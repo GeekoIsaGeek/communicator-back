@@ -12,6 +12,7 @@ import Message from './models/message';
 import authSocket from './middleware/authSocket';
 import messageRoutes from './routes/messageRoutes';
 import User from './models/user';
+import connectionRoutes from './routes/connectionRoutes';
 
 connectDB();
 
@@ -31,10 +32,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api/avatars', express.static('storage/images/avatars'));
 app.use('/api', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/connections', connectionRoutes);
+app.use('/api/avatars', express.static('storage/images/avatars'));
 
 io.use((socket, next) => {
 	authSocket(socket, next);

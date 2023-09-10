@@ -12,3 +12,16 @@ export const getMessages = async (req: Request, res: Response) => {
 
 	res.status(200).json(messages);
 };
+
+export const removeMessages = async (req: Request, res: Response) => {
+	const { receiver, sender } = req.query;
+
+	const messages = await Message.deleteMany({
+		$or: [
+			{ sender, receiver },
+			{ sender: receiver, receiver: sender },
+		],
+	});
+
+	res.status(200).json(messages);
+};

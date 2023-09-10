@@ -1,10 +1,8 @@
 import User from '../models/user';
 import { IExtendedRequest } from '../types/general';
 import { Response } from 'express';
-import { IUser } from '../types/user';
 import getUserWithConnections from '../actions/getUserWithConnections';
-
-type ExtendedUser = IUser & { _id: string };
+import { ExtendedUser } from '../types/general';
 
 export const getAuthenticatedUserData = async (req: IExtendedRequest, res: Response) => {
 	const { email } = req.user!;

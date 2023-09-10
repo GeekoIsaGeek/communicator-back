@@ -5,3 +5,4 @@ export interface IExtendedRequest extends Request {
 	user?: IUser;
 	imageName?: string;
 }
+export type ExtendedUser = IUser & { _id: string };
