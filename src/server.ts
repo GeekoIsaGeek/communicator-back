@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import connectDB from './config/dbConnection';
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import authRoutes from './routes/authRoutes';
 import userRoutes from './routes/userRoutes';
 import http from 'http';
@@ -13,6 +13,9 @@ import authSocket from './middleware/authSocket';
 import messageRoutes from './routes/messageRoutes';
 import User from './models/user';
 import connectionRoutes from './routes/connectionRoutes';
+import { IUser, IOnlineUsers } from './types/user';
+import { IExtendedSocket } from './types/general';
+import { createConnection } from './controllers/connectionController';
 
 connectDB();
 
@@ -28,7 +31,7 @@ const io = new Server(server, {
 	},
 });
 
-app.use(cors());
+app.use(cors({ origin: process.env.CLIENT_APP_URL }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -38,14 +41,19 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/connections', connectionRoutes);
 app.use('/api/avatars', express.static('storage/images/avatars'));
 
-io.use((socket, next) => {
+io.use((socket: Socket, next) => {
 	authSocket(socket, next);
 });
 
-io.on('connection', (socket: Socket) => {
-	socket.on('message', async ({ receiver, sender, content, room }: IMessage & { room: string }) => {
-		socket.join(room);
+const onlineUsers: IOnlineUsers = {};
 
+io.on('connection', (socket: IExtendedSocket) => {
+	if (socket.userId) {
+		onlineUsers[socket?.userId as string] = socket.id;
+	}
+	io.emit('onlineUsers', onlineUsers);
+
+	socket.on('message', async ({ receiver, sender, content }: IMessage) => {
 		const message = await Message.create({
 			receiver,
 			sender,
@@ -53,13 +61,16 @@ io.on('connection', (socket: Socket) => {
 			seen: false,
 		});
 
-		const user = await User.findById(sender).select('-password');
-		if (user && !user.connections.includes(receiver)) {
-			user.connections.push(receiver);
-			user.save();
-		}
+		await createConnection(sender, receiver);
+		await createConnection(receiver, sender);
 
-		io.to(room).emit('message', message);
+		const receiverSocket = onlineUsers[receiver.toString()];
+		io.to([receiverSocket, socket.id]).emit('message', message);
+	});
+
+	socket.on('disconnect', () => {
+		delete onlineUsers[socket.userId!];
+		io.emit('onlineUsers', onlineUsers);
 	});
 });
 

@@ -6,7 +6,7 @@ import validator from 'validator';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import { IExtendedRequest } from '../types/general';
-import getUserWithConnections from '../actions/getUserWithConnections';
+import { getUserWithConnections } from './userController';
 
 dotenv.config();
 
