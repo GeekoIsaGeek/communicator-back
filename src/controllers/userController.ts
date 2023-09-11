@@ -2,12 +2,13 @@ import User from '../models/user';
 import { IExtendedRequest } from '../types/general';
 import { Response } from 'express';
 import { ExtendedUser } from '../types/general';
+import { Types } from 'mongoose';
+import { log } from 'console';
 
 export const getAuthenticatedUserData = async (req: IExtendedRequest, res: Response) => {
 	const { email } = req.user!;
 	try {
 		const user = await getUserWithConnections(email);
-
 		if (!user) {
 			throw new Error('User with this email does not exist');
 		}

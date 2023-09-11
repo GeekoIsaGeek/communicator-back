@@ -46,7 +46,6 @@ io.use((socket: Socket, next) => {
 	authSocket(socket, next);
 }).on('connection', (socket: IExtendedSocket) => {
 	onConnect(io, socket, onlineUsers);
-
 	socket.on('message', onMessage(io, socket, onlineUsers));
 	socket.on('disconnect', () => onDisconnect(io, socket, onlineUsers));
 });
