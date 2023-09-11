@@ -15,7 +15,7 @@ export const removeConnection = async (req: IExtendedRequest, res: Response) => 
 			res.status(200).json({ removedConnectionId: connectionId });
 		}
 	} catch (error) {
-		res.status(400).json({ message: 'Connection not removed' });
+		res.status(400).json({ message: 'Connection could not be removed' });
 	}
 };
 
@@ -27,6 +27,6 @@ export const createConnection = async (userId: Types.ObjectId, connectionId: Typ
 			user.save();
 		}
 	} catch (error) {
-		throw new Error('User with the provided id could not found');
+		throw new Error('User with the provided id could not be found');
 	}
 };

@@ -2,20 +2,19 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import connectDB from './config/dbConnection';
-import mongoose, { Types } from 'mongoose';
+import mongoose from 'mongoose';
 import authRoutes from './routes/authRoutes';
 import userRoutes from './routes/userRoutes';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
-import { IMessage } from './types/message';
-import Message from './models/message';
 import authSocket from './middleware/authSocket';
 import messageRoutes from './routes/messageRoutes';
-import User from './models/user';
 import connectionRoutes from './routes/connectionRoutes';
-import { IUser, IOnlineUsers } from './types/user';
+import { IOnlineUsers } from './types/user';
 import { IExtendedSocket } from './types/general';
-import { createConnection } from './controllers/connectionController';
+import onMessage from './socket-handlers/onMessage';
+import onConnect from './socket-handlers/onConnect';
+import onDisconnect from './socket-handlers/onDisconnect';
 
 connectDB();
 
@@ -31,6 +30,8 @@ const io = new Server(server, {
 	},
 });
 
+const onlineUsers: IOnlineUsers = {};
+
 app.use(cors({ origin: process.env.CLIENT_APP_URL }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -44,34 +45,10 @@ app.use('/api/avatars', express.static('storage/images/avatars'));
 io.use((socket: Socket, next) => {
 	authSocket(socket, next);
 });
-
-const onlineUsers: IOnlineUsers = {};
-
 io.on('connection', (socket: IExtendedSocket) => {
-	if (socket.userId) {
-		onlineUsers[socket?.userId as string] = socket.id;
-	}
-	io.emit('onlineUsers', onlineUsers);
-
-	socket.on('message', async ({ receiver, sender, content }: IMessage) => {
-		const message = await Message.create({
-			receiver,
-			sender,
-			content,
-			seen: false,
-		});
-
-		await createConnection(sender, receiver);
-		await createConnection(receiver, sender);
-
-		const receiverSocket = onlineUsers[receiver.toString()];
-		io.to([receiverSocket, socket.id]).emit('message', message);
-	});
-
-	socket.on('disconnect', () => {
-		delete onlineUsers[socket.userId!];
-		io.emit('onlineUsers', onlineUsers);
-	});
+	onConnect(io, socket, onlineUsers);
+	socket.on('message', onMessage(io, socket, onlineUsers));
+	socket.on('disconnect', () => onDisconnect(io, socket, onlineUsers));
 });
 
 app.get('/', (req, res) => {
