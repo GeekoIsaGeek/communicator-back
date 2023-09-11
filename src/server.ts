@@ -44,9 +44,9 @@ app.use('/api/avatars', express.static('storage/images/avatars'));
 
 io.use((socket: Socket, next) => {
 	authSocket(socket, next);
-});
-io.on('connection', (socket: IExtendedSocket) => {
+}).on('connection', (socket: IExtendedSocket) => {
 	onConnect(io, socket, onlineUsers);
+
 	socket.on('message', onMessage(io, socket, onlineUsers));
 	socket.on('disconnect', () => onDisconnect(io, socket, onlineUsers));
 });
