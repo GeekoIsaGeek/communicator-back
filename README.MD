@@ -1,6 +1,6 @@
 # Communicator - back
 
-Backend app for a real-time one-to-one messaging application.
+Backend app for REST API and WebSocket that serves a real-time one-to-one messaging application.
 
 ### Table of Contents
 
