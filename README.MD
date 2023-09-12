@@ -90,15 +90,15 @@ Every listed endpoint is protected from unauthorized access (except ones for aut
 
 #### GET
 
-`Authenticated user` /user
-`Registered Users` /users
-`Chat messages` /messages `requires query params: sender, receiver`
+`Authenticated user` /user \
+`Registered Users` /users \
+`Chat messages` /messages `requires query params: sender, receiver` \
 `Connected users` /connections
 
 #### POST
 
-`Login` /login
-`Registration` /register
+`Login` /login \
+`Registration` /register \
 `Remove user from connections` /connections/remove `requires connectionId`
 
 #### DELETE
