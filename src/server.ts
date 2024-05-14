@@ -16,6 +16,7 @@ import onMessage from './socket-handlers/onMessage';
 import onConnect from './socket-handlers/onConnect';
 import onDisconnect from './socket-handlers/onDisconnect';
 import { logger } from './config/logger';
+import { info } from 'console';
 
 connectDB();
 
@@ -54,7 +55,7 @@ io.use((socket: Socket, next) => {
 app.get('/', (req, res) => {
 	res.send(`
 		<h1 style="text-align:center; font-family:system-ui">
-			REST API for a messaging app
+			REST API for a one-to-one messaging app
 		</h1>
 	`);
 });

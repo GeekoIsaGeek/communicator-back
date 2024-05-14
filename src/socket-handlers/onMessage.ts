@@ -4,6 +4,7 @@ import { IMessage } from '../types/message';
 import { Server } from 'socket.io';
 import { IExtendedSocket } from '../types/general';
 import { IOnlineUsers } from '../types/user';
+import { logger } from '../config/logger';
 
 const onMessage = (io: Server, socket: IExtendedSocket, onlineUsers: IOnlineUsers) => {
 	return async ({ receiver, sender, content }: IMessage) => {

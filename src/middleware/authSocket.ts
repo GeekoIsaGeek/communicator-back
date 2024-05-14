@@ -2,14 +2,13 @@ import jwt from 'jsonwebtoken';
 import { Socket } from 'socket.io';
 
 const authSocket = async (socket: Socket, next: Function) => {
-	const token = socket.handshake.auth.token;
-	const userId = socket.handshake.query.userId;
+	const { token, userId } = socket.handshake.query;
 
-	if (!token) {
-		return next(new Error('Authentication error'));
-	}
 	try {
-		jwt.verify(token, process.env.TOKEN_SECRET as string);
+		if (!token || !userId) {
+			throw new Error('Authentication error');
+		}
+		jwt.verify(token.toString(), process.env.TOKEN_SECRET as string);
 		Object.assign(socket, { userId: userId?.toString() });
 		next();
 	} catch (error) {
