@@ -3,4 +3,6 @@
 /storage
 
 .env
-app.logs
+
+*.log
+*.logs

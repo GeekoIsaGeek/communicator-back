@@ -16,7 +16,6 @@ import onMessage from './socket-handlers/onMessage';
 import onConnect from './socket-handlers/onConnect';
 import onDisconnect from './socket-handlers/onDisconnect';
 import { logger } from './config/logger';
-import { info } from 'console';
 
 connectDB();
 
