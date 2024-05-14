@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { Types } from 'mongoose';
 import validator from 'validator';
-import bcrypt from 'bcrypt';
+import argon2 from 'argon2';
 import dotenv from 'dotenv';
 import { IExtendedRequest } from '../types/general';
 import { getUserWithConnections } from './userController';
@@ -40,8 +40,7 @@ export const registerUser = async (req: IExtendedRequest, res: Response) => {
 			throw new Error('Email already in use');
 		}
 
-		const salt = await bcrypt.genSalt(10);
-		const hashedPassword = await bcrypt.hash(password, salt);
+		const hashedPassword = await argon2.hash(password);
 
 		const user = new User({ email, name, password: hashedPassword });
 
@@ -71,7 +70,7 @@ export const loginUser = async (req: Request, res: Response) => {
 			throw new Error('Email is not correct');
 		}
 
-		const matched = await bcrypt.compare(password, user.password);
+		const matched = await argon2.verify(user.password, password);
 
 		if (!matched) {
 			throw new Error('Password is not correct');
