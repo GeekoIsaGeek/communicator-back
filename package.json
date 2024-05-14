@@ -8,7 +8,7 @@
 		"prestart": "npm run build",
 		"start": "node dist/server.js",
 		"preserve": "npm run build",
-		"serve": "concurrently \"npx tsc -w\" \"nodemon dist/server.js\""
+		"serve": "npx tsc -w & nodemon dist/server.js"
 	},
 	"author": "",
 	"license": "ISC",
@@ -31,7 +31,6 @@
 		"@types/multer": "^1.4.7",
 		"@types/node": "^20.5.6",
 		"@types/validator": "^13.11.1",
-		"concurrently": "^8.2.1",
 		"nodemon": "^3.0.1",
 		"typescript": "^5.2.2"
 	}
