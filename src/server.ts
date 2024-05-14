@@ -15,6 +15,7 @@ import { IExtendedSocket } from './types/general';
 import onMessage from './socket-handlers/onMessage';
 import onConnect from './socket-handlers/onConnect';
 import onDisconnect from './socket-handlers/onDisconnect';
+import { logger } from './config/logger';
 
 connectDB();
 
@@ -60,6 +61,6 @@ app.get('/', (req, res) => {
 
 mongoose.connection.once('open', () => {
 	server.listen(process.env.PORT, () => {
-		console.log('Server has started');
+		logger.info(`Server has started on port ${process.env.PORT}`);
 	});
 });
